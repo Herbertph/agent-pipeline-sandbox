@@ -20,18 +20,37 @@ export function validateTitle(rawTitle) {
 }
 
 /**
+ * @typedef {{ id: string, title: string, done: boolean }} Task
+ */
+
+/**
  * Returns a new task list with the task appended. Never mutates the input list.
- * @param {Array<{ id: string, title: string }>} tasks
+ * New tasks start as not done.
+ * @param {Task[]} tasks
  * @param {unknown} rawTitle
  * @param {{ createId?: () => string }} [options]
- * @returns {{ tasks: Array<{ id: string, title: string }>, error: string | null }}
+ * @returns {{ tasks: Task[], error: string | null }}
  */
 export function addTask(tasks, rawTitle, { createId = () => crypto.randomUUID() } = {}) {
   const result = validateTitle(rawTitle);
   if (!result.ok) {
     return { tasks, error: result.error };
   }
-  return { tasks: [...tasks, { id: createId(), title: result.title }], error: null };
+  return { tasks: [...tasks, { id: createId(), title: result.title, done: false }], error: null };
+}
+
+/**
+ * Returns a new task list in which the task with the given id has its done state inverted.
+ * Never mutates the input list or its tasks. Returns the input list unchanged when no task matches.
+ * @param {Task[]} tasks
+ * @param {string} id
+ * @returns {Task[]}
+ */
+export function toggleTask(tasks, id) {
+  if (!tasks.some((task) => task.id === id)) {
+    return tasks;
+  }
+  return tasks.map((task) => (task.id === id ? { ...task, done: !task.done } : task));
 }
 
 /**
