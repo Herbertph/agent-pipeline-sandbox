@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { addTask, formatTaskCount, MAX_TITLE_LENGTH, validateTitle } from '../../src/tasks.js';
+import { addTask, formatTaskCount, MAX_TITLE_LENGTH, toggleTask, validateTitle } from '../../src/tasks.js';
 
 describe('validateTitle', () => {
   it('trims surrounding whitespace', () => {
@@ -41,8 +41,12 @@ describe('addTask', () => {
     expect(result.error).toBeNull();
     expect(result.tasks).toEqual([
       { id: 'id-0', title: 'First' },
-      { id: 'id-1', title: 'Second' },
+      { id: 'id-1', title: 'Second', done: false },
     ]);
+  });
+
+  it('AC-17: creates new tasks as not done', () => {
+    expect(addTask([], 'Task', { createId: fixedId }).tasks).toEqual([{ id: 'id-1', title: 'Task', done: false }]);
   });
 
   it('does not mutate the original list', () => {
@@ -63,6 +67,48 @@ describe('addTask', () => {
     const second = addTask(first.tasks, 'B');
     const [a, b] = second.tasks;
     expect(a.id).not.toBe(b.id);
+  });
+});
+
+describe('toggleTask', () => {
+  it('AC-12: marks only the task with the given id as done', () => {
+    const tasks = [
+      { id: 'a', title: 'A', done: false },
+      { id: 'b', title: 'B', done: false },
+    ];
+    expect(toggleTask(tasks, 'b')).toEqual([
+      { id: 'a', title: 'A', done: false },
+      { id: 'b', title: 'B', done: true },
+    ]);
+  });
+
+  it('AC-13: marks a done task as not done', () => {
+    const tasks = [{ id: 'a', title: 'A', done: true }];
+    expect(toggleTask(tasks, 'a')).toEqual([{ id: 'a', title: 'A', done: false }]);
+  });
+
+  it('AC-14: does not mutate the input list or its tasks', () => {
+    const tasks = [
+      { id: 'a', title: 'A', done: false },
+      { id: 'b', title: 'B', done: true },
+    ];
+    const snapshot = structuredClone(tasks);
+    const originals = [...tasks];
+    toggleTask(tasks, 'a');
+    toggleTask(tasks, 'b');
+    expect(tasks).toEqual(snapshot);
+    expect(tasks[0]).toBe(originals[0]);
+    expect(tasks[1]).toBe(originals[1]);
+  });
+
+  it('AC-15: returns the same list when no task has the id', () => {
+    const tasks = [{ id: 'a', title: 'A', done: false }];
+    expect(toggleTask(tasks, 'missing')).toBe(tasks);
+  });
+
+  it('AC-16: returns the same empty list without throwing', () => {
+    const tasks = [];
+    expect(toggleTask(tasks, 'a')).toBe(tasks);
   });
 });
 
