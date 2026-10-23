@@ -103,6 +103,27 @@ button {
   overflow-wrap: anywhere;
 }
 
+.list .task {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0;
+  font-weight: normal;
+  cursor: pointer;
+}
+
+.list .task input {
+  flex: none;
+  width: 1rem;
+  height: 1rem;
+  margin: 0;
+  padding: 0;
+}
+
+.task-title.done {
+  text-decoration: line-through;
+}
+
 .empty {
   color: var(--muted);
 }
