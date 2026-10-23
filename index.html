@@ -1,0 +1,27 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Task List</title>
+  </head>
+  <body>
+    <main class="app">
+      <h1>Task List</h1>
+
+      <form id="task-form" novalidate>
+        <label for="task-title">New task</label>
+        <div class="row">
+          <input id="task-title" name="title" type="text" autocomplete="off" aria-describedby="task-error" />
+          <button type="submit">Add task</button>
+        </div>
+        <p id="task-error" class="error" role="alert"></p>
+      </form>
+
+      <p id="task-count" class="count" aria-live="polite"></p>
+      <ul id="task-list" class="list" aria-label="Tasks"></ul>
+      <p id="empty-state" class="empty">No tasks yet.</p>
+    </main>
+    <script type="module" src="/src/main.js"></script>
+  </body>
+</html>
